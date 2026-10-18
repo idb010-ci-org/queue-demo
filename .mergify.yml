@@ -1,0 +1,13 @@
+# idb-010 fixture — mirrors findings/mergify/mergify-20261017-001 fixtures:
+# scopes source MANUAL (the documented recommended setup for monorepo build tools,
+# merge-queue/scopes.md:148 "instructs Mergify to expect scopes from external systems
+# via the API or GitHub Action").
+# STAGING NOTE: no pull_request_rules queue action during staging (Agent B must not
+# queue/merge anything pre-GO). The GO plan documents the optional auto-queue rule push.
+scopes:
+  source:
+    manual:
+
+queue_rules:
+  - name: default
+    batch_size: 5
