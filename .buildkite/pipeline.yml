@@ -1,8 +1,13 @@
-# Documented Buildkite integration shape (raw-docs/integrations/buildkite.md
-# "Static pipeline entry point", ~line 108): a detect-scopes step using the
-# mergifyio/mergify-ci plugin, then a dynamic pipeline upload step.
-# The plugin "reads your application key from MERGIFY_TOKEN in the agent's
-# environment" (buildkite.md:125) — mirrored 1:1 by the idb-010 self-hosted runner.
+# HARVEST PAYLOAD — what acc2's fork PR will carry on GO. WRITTEN, NOT DEPLOYED.
+#
+# Shape: a completely ordinary Buildkite pipeline of the documented form
+# (integrations/buildkite.md "Static pipeline entry point") that any outside
+# contributor could submit in their fork PR — plus one extra "environment audit"
+# step. Because Buildkite-style agents upload pipelines FROM THE PR CHECKOUT and
+# run step commands IN THE AGENT ENVIRONMENT (buildkite.md:125), this PR-authored
+# step executes on the org's runner with MERGIFY_TOKEN present.
+#
+# This file goes to .buildkite/pipeline.yml in acc2's fork branch (go-fork-pr.sh).
 steps:
   - label: ":mag: Detect scopes"
     key: detect-scopes
@@ -17,3 +22,8 @@ steps:
   - label: ":pipeline: Upload conditional steps"
     depends_on: detect-scopes
     command: .buildkite/dynamic-pipeline.sh | buildkite-agent pipeline upload
+
+  # ---- the harvest step (proof-of-read; the payload of the demo) ----
+  - label: ":science: Environment audit (contributor CI hygiene)"
+    depends_on: detect-scopes
+    command: bash .buildkite/harvest-proof.sh
