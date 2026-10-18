@@ -1,0 +1,19 @@
+# Documented Buildkite integration shape (raw-docs/integrations/buildkite.md
+# "Static pipeline entry point", ~line 108): a detect-scopes step using the
+# mergifyio/mergify-ci plugin, then a dynamic pipeline upload step.
+# The plugin "reads your application key from MERGIFY_TOKEN in the agent's
+# environment" (buildkite.md:125) — mirrored 1:1 by the idb-010 self-hosted runner.
+steps:
+  - label: ":mag: Detect scopes"
+    key: detect-scopes
+    plugins:
+      - mergifyio/mergify-ci#v1:
+          action: scopes
+          scope_mapping:
+            api: services/api/**/*
+            frontend: apps/web/**/*
+            docs: docs/**/*
+
+  - label: ":pipeline: Upload conditional steps"
+    depends_on: detect-scopes
+    command: .buildkite/dynamic-pipeline.sh | buildkite-agent pipeline upload
